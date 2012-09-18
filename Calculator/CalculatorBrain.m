@@ -24,14 +24,28 @@ if (!_programStack)
     return [self.programStack copy];
 }
 
--(void) pushOperand:(double) operand{
-    [self.programStack addObject:[NSNumber numberWithDouble:operand]];
+-(void) pushOperand:(id) operand{
+    if (operand) {
+        [self.programStack addObject:operand];
+    }
 }
 
 -(double) performOperation:(NSString*) operation{
-
     [self.programStack addObject:operation];
     return [[self class] runProgram:self.program];
+}
+
+-(double) performOperation:(NSString*) operation usingVariableValues:(NSDictionary *)variableValues{
+    [self.programStack addObject:operation];
+    return [[self class] runProgram:self.program usingVariableValues:variableValues];
+
+}
+
++ (BOOL)isVariable:(NSString *)variable{
+    char firstChar = [variable characterAtIndex:0];
+    if (firstChar >= 'A' && firstChar <= 'z')
+        return YES;
+    else return NO;
 }
 
 +(double)popOperandOffStack:(NSMutableArray*)stack{
@@ -75,6 +89,21 @@ if (!_programStack)
     return result;
 }
 
+
++ (NSSet *)variablesUsedInProgram:(id)program{
+    NSMutableSet *variables;
+    for (id obj in program)
+    {
+        if ([obj isKindOfClass:[NSString class]] && [self isVariable:obj]){
+                //alloc local 'variables' if needed
+                if (!variables) variables = [[NSMutableSet alloc]init];
+                [variables addObject:obj];
+        }
+    }
+    NSLog(@"variables: %@",variables);
+    return [variables copy];//copy?
+}
+
 +(double) runProgram:(id)program{
     NSMutableArray *stack;
     if ([program isKindOfClass:[NSArray class]]){
@@ -83,11 +112,58 @@ if (!_programStack)
     return [self popOperandOffStack:stack];
 }
 
++ (double)runProgram:(id)program usingVariableValues:(NSDictionary *)variableValues{
+    __strong NSMutableArray *programArray = [program mutableCopy];
+    
+    //replace variables with numbers
+    if (variableValues && [programArray isKindOfClass:[NSArray class]]){
+        NSSet *variables = [self variablesUsedInProgram:programArray];
+        
+        //go through the program array
+        for (int i = 0; i< programArray.count; i++) {
+            id obj = [programArray objectAtIndex:i];
+            BOOL needsExchange = NO;
+
+            //go through variables present in program
+            for (NSString *var in variables) {
+                
+                //make sure its a string before checking isVariable
+                if ([obj isKindOfClass:[NSString class]]
+                    && [self isVariable:obj]){
+                    needsExchange = YES;
+                    
+                    //replace value for variable, make sure value exists first
+                    if ([var isEqualToString:obj] && [variableValues objectForKey:obj]){
+                        [programArray replaceObjectAtIndex:i withObject:[variableValues objectForKey:obj]];
+                        needsExchange = NO;
+                        break;
+                    }
+                }
+            }
+            if (needsExchange)
+                [programArray replaceObjectAtIndex:i withObject:[NSNumber numberWithDouble:0]];
+        }
+    }
+    return [self runProgram:programArray];
+}
+
+
+
+-(NSString*) descriptionOfProgram:(id)program{
+    if (program)
+        return [[self class]descriptionOfProgram:program];
+    else{
+        return [[self class]descriptionOfProgram:self.programStack];
+    }
+}
 
 +(NSString*) descriptionOfProgram:(id)program{
     return @"";
 }
 
++ (BOOL)isOperation:(NSString *)operation{
+    return NO;
+}
 
 -(void) clearData{
     self.programStack = nil;//this okay to clear?
