@@ -43,7 +43,7 @@ if (!_programStack)
 
 + (BOOL)isVariable:(NSString *)variable{
     char firstChar = [variable characterAtIndex:0];
-    if (firstChar >= 'A' && firstChar <= 'z')
+    if (firstChar >= 'A' && firstChar <= 'z'  && ![self isOperation:variable])
         return YES;
     else return NO;
 }
