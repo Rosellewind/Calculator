@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 Roselle Milvich. All rights reserved.
 //
 
+
 #import "CalculatorBrain.h"
 @interface CalculatorBrain()
 @property (nonatomic, strong) NSMutableArray *programStack;
@@ -157,20 +158,22 @@ if (!_programStack)
     }
 }
 
-+ (NSString *)descriptionOfTopOfStack:(NSMutableArray *)stack
++ (NSString *)descriptionOfTopOfStack:(NSMutableArray *)stack previousOperation:(NSString*)previousOperation
 {
         NSString *description;
         id topOfStack = [stack lastObject];
         if (topOfStack) [stack removeLastObject];
         NSLog(@"topOfStack: %@",topOfStack);
     
-        if ([self isBinaryOperation:topOfStack]){
-            NSString *secondOperand = [[self class] descriptionOfTopOfStack:stack];
-            NSString *firstOperand = [[self class] descriptionOfTopOfStack:stack];
-            description = [NSString stringWithFormat:@"(%@ %@ %@)", firstOperand, topOfStack, secondOperand];
+        if ([self isBinaryOperation:topOfStack]){          
+            NSString *secondOperand = [[self class] descriptionOfTopOfStack:stack previousOperation:topOfStack];
+            NSString *firstOperand = [[self class] descriptionOfTopOfStack:stack previousOperation:topOfStack];
+            if ([self extraParenthesesInnerOperator:topOfStack outerOperator:previousOperation])
+                description = [NSString stringWithFormat:@"%@ %@ %@", firstOperand, topOfStack, secondOperand];
+            else description = [NSString stringWithFormat:@"(%@ %@ %@)", firstOperand, topOfStack, secondOperand];
         }
         else if ([self isUnaryOperation:topOfStack]){
-            description = [NSString stringWithFormat:@"%@(%@)", topOfStack, [[self class] descriptionOfTopOfStack:stack]];
+            description = [NSString stringWithFormat:@"%@(%@)", topOfStack, [[self class] descriptionOfTopOfStack:stack previousOperation:@"unary"]];
         }
         else if ([topOfStack isKindOfClass:[NSNumber class]])
             description = [topOfStack stringValue];//operand
@@ -186,16 +189,25 @@ if (!_programStack)
         NSMutableArray *stack = [program mutableCopy];
         NSMutableArray *programList = [[NSMutableArray alloc] init];
     
-        // get descriptions until exhausted
+        // get descriptions of sub-programs
         while ([stack count] > 0) {
-            [programList addObject:[self descriptionOfTopOfStack:stack]];
+            [programList addObject:[self descriptionOfTopOfStack:stack previousOperation:nil]];
         }
         
-        // return list of programs, comma-separated
+        //join descriptions with ','
         description =  [programList componentsJoinedByString:@", "];
     }
     NSLog(@".............%@",description);
     return description;
+}
+
+
++ (BOOL)extraParenthesesInnerOperator:(NSString*)innerOperator outerOperator:(NSString*)outerOperator{
+    if ([innerOperator isEqualToString:@"/"] ||
+        [outerOperator isEqualToString:@"/"] ||
+        ([outerOperator isEqualToString:@"*"] && ![innerOperator isEqualToString:@"*"]))
+         return NO;
+    else return YES;
 }
     
 + (BOOL)isOperation:(NSString *)operation{
