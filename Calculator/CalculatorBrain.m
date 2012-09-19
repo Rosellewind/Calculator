@@ -113,7 +113,7 @@ if (!_programStack)
 }
 
 + (double)runProgram:(id)program usingVariableValues:(NSDictionary *)variableValues{
-    __strong NSMutableArray *programArray = [program mutableCopy];
+    NSMutableArray *programArray = [program mutableCopy];
     
     //replace variables with numbers
     if (variableValues && [programArray isKindOfClass:[NSArray class]]){
@@ -157,12 +157,62 @@ if (!_programStack)
     }
 }
 
-+(NSString*) descriptionOfProgram:(id)program{
-    return @"";
++ (NSString *)descriptionOfTopOfStack:(NSMutableArray *)stack
+{
+        NSString *description;
+        id topOfStack = [stack lastObject];
+        if (topOfStack) [stack removeLastObject];
+        NSLog(@"topOfStack: %@",topOfStack);
+    
+        if ([self isBinaryOperation:topOfStack]){
+            NSString *secondOperand = [[self class] descriptionOfTopOfStack:stack];
+            NSString *firstOperand = [[self class] descriptionOfTopOfStack:stack];
+            description = [NSString stringWithFormat:@"(%@ %@ %@)", firstOperand, topOfStack, secondOperand];
+        }
+        else if ([self isUnaryOperation:topOfStack]){
+            description = [NSString stringWithFormat:@"%@(%@)", topOfStack, [[self class] descriptionOfTopOfStack:stack]];
+        }
+        else if ([topOfStack isKindOfClass:[NSNumber class]])
+            description = [topOfStack stringValue];//operand
+        else if ([topOfStack isKindOfClass:[NSString class]])
+            description = topOfStack;//pi or variable
+    NSLog(@"description:%@",description);
+    return description;
 }
 
++(NSString*) descriptionOfProgram:(id)program{
+    NSString *description;
+    if ([program isKindOfClass:[NSArray class]]){
+        NSMutableArray *stack = [program mutableCopy];
+        NSMutableArray *programList = [[NSMutableArray alloc] init];
+    
+        // get descriptions until exhausted
+        while ([stack count] > 0) {
+            [programList addObject:[self descriptionOfTopOfStack:stack]];
+        }
+        
+        // return list of programs, comma-separated
+        description =  [programList componentsJoinedByString:@", "];
+    }
+    NSLog(@".............%@",description);
+    return description;
+}
+    
 + (BOOL)isOperation:(NSString *)operation{
-    return NO;
+    NSArray *operations = [NSArray arrayWithObjects:@"*", @"/", @"+", @"-", @"sin", @"cos", @"sqrt", @"pi", nil];
+    return ([operations containsObject:operation]);
+}
+
++ (BOOL)isBinaryOperation:(NSString*)operation{
+    NSSet *operations = [NSSet setWithObjects:@"*", @"/", @"+", @"-", nil];
+    if ([operations containsObject:operation])
+        return YES;
+    else return NO;
+}
+
++ (BOOL)isUnaryOperation:(NSString *)operation{
+    NSArray *operations = [NSArray arrayWithObjects:@"sin", @"cos", @"sqrt", nil];
+    return ([operations containsObject:operation]);
 }
 
 -(void) clearData{

@@ -104,7 +104,6 @@
     [self addToHistory:@"="];
     double result = [self.brain performOperation:operation usingVariableValues:self.variableValues];
     //[[self.brain class] runProgram:operation usingVariableValues:self.variableValues];
-    //double result = [self.brain performOperation:operation];
     self.display.text = [NSString stringWithFormat:@"%.12g", result];
 }
 
