@@ -31,6 +31,11 @@ if (!_programStack)
     }
 }
 
+-(void) popOffProgramStack{
+    
+    if (self.programStack.count >0) [self.programStack removeLastObject];
+}
+
 -(double) performOperation:(NSString*) operation{
     [self.programStack addObject:operation];
     return [[self class] runProgram:self.program];
@@ -42,11 +47,28 @@ if (!_programStack)
 
 }
 
-+ (BOOL)isVariable:(NSString *)variable{
-    char firstChar = [variable characterAtIndex:0];
-    if (firstChar >= 'A' && firstChar <= 'z'  && ![self isOperation:variable])
-        return YES;
-    else return NO;
+- (double)runProgram:(id)program usingVariableValues:(NSDictionary *)variableValues{
+    if (program) {
+        return [[self class] runProgram:program usingVariableValues:variableValues];
+        
+    }
+    return [[self class] runProgram:self.program usingVariableValues:variableValues];
+}
+
+-(void) clearData{
+    self.programStack = nil;//this okay to clear?
+}
+
+-(NSString*)description{
+    return [NSString stringWithFormat:@"Brain's stack: %@",self.programStack];
+}
+
+-(NSString*) descriptionOfProgram:(id)program{
+    if (program)
+        return [[self class]descriptionOfProgram:program];
+    else{
+        return [[self class]descriptionOfProgram:self.programStack];
+    }
 }
 
 +(double)popOperandOffStack:(NSMutableArray*)stack{
@@ -88,21 +110,6 @@ if (!_programStack)
             result = -1 * [self popOperandOffStack:stack];
     }
     return result;
-}
-
-
-+ (NSSet *)variablesUsedInProgram:(id)program{
-    NSMutableSet *variables;
-    for (id obj in program)
-    {
-        if ([obj isKindOfClass:[NSString class]] && [self isVariable:obj]){
-                //alloc local 'variables' if needed
-                if (!variables) variables = [[NSMutableSet alloc]init];
-                [variables addObject:obj];
-        }
-    }
-    NSLog(@"variables: %@",variables);
-    return [variables copy];//copy?
 }
 
 +(double) runProgram:(id)program{
@@ -148,16 +155,6 @@ if (!_programStack)
     return [self runProgram:programArray];
 }
 
-
-
--(NSString*) descriptionOfProgram:(id)program{
-    if (program)
-        return [[self class]descriptionOfProgram:program];
-    else{
-        return [[self class]descriptionOfProgram:self.programStack];
-    }
-}
-
 + (NSString *)descriptionOfTopOfStack:(NSMutableArray *)stack previousOperation:(NSString*)previousOperation
 {
         NSString *description;
@@ -201,7 +198,6 @@ if (!_programStack)
     return description;
 }
 
-
 + (BOOL)extraParenthesesInnerOperator:(NSString*)innerOperator outerOperator:(NSString*)outerOperator{
     if ([innerOperator isEqualToString:@"/"] ||
         [outerOperator isEqualToString:@"/"] ||
@@ -209,7 +205,28 @@ if (!_programStack)
          return NO;
     else return YES;
 }
-    
+
++ (NSSet *)variablesUsedInProgram:(id)program{
+    NSMutableSet *variables;
+    for (id obj in program)
+    {
+        if ([obj isKindOfClass:[NSString class]] && [self isVariable:obj]){
+            //alloc local 'variables' if needed
+            if (!variables) variables = [[NSMutableSet alloc]init];
+            [variables addObject:obj];
+        }
+    }
+    NSLog(@"variables: %@",variables);
+    return [variables copy];//copy?
+}
+
++ (BOOL)isVariable:(NSString *)variable{
+    char firstChar = [variable characterAtIndex:0];
+    if (firstChar >= 'A' && firstChar <= 'z'  && ![self isOperation:variable])
+        return YES;
+    else return NO;
+}
+
 + (BOOL)isOperation:(NSString *)operation{
     NSArray *operations = [NSArray arrayWithObjects:@"*", @"/", @"+", @"-", @"sin", @"cos", @"sqrt", @"pi", nil];
     return ([operations containsObject:operation]);
@@ -225,14 +242,6 @@ if (!_programStack)
 + (BOOL)isUnaryOperation:(NSString *)operation{
     NSArray *operations = [NSArray arrayWithObjects:@"sin", @"cos", @"sqrt", nil];
     return ([operations containsObject:operation]);
-}
-
--(void) clearData{
-    self.programStack = nil;//this okay to clear?
-}
-
--(NSString*)description{
-    return [NSString stringWithFormat:@"Brain's stack: %@",self.programStack];
 }
 
 @end

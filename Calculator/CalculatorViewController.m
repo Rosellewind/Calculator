@@ -17,12 +17,11 @@
 
 @implementation CalculatorViewController
 @synthesize display = _display;
-@synthesize history = _history;
+@synthesize values = _values;
+@synthesize infixDisplay = _infixDisplay;
 @synthesize userIsInTheMiddleOfEnteringANumber = _userIsInTheMiddleOfEnteringANumber;
 @synthesize userIsInTheMiddleOfEnteringAVariable = _userIsInTheMiddleOfEnteringAVariable;
 @synthesize brain = _brain;
-@synthesize values = _values;
-@synthesize description = _description;
 @synthesize variableValues = _variableValues;
 
 
@@ -34,33 +33,6 @@
 -(NSMutableDictionary*) variableValues{
     if (!_variableValues) _variableValues = [[NSMutableDictionary alloc]init];
     return _variableValues;
-}
-
-- (void) addToHistory:(NSString*)string{
-    self.history.text = [self.history.text stringByAppendingFormat:@"%@ ",string];
-    if (self.history.text.length > 40) {
-        self.history.text = [self.history.text substringFromIndex:self.history.text.length-40];
-    }
-}
-
-- (IBAction)enterPressed {
-    NSString *stringOfOperand = self.display.text;
-    id operand;
-    if (self.userIsInTheMiddleOfEnteringANumber){
-        operand = [NSNumber numberWithDouble:stringOfOperand.doubleValue];
-        [self addToHistory:stringOfOperand];
-    }
-    else if (self.userIsInTheMiddleOfEnteringAVariable){
-        if ([self isValidVariable:stringOfOperand]){
-            operand = stringOfOperand;
-            [self addToHistory:stringOfOperand];
-        }
-        else self.display.text = @"0";
-
-    }
-    self.userIsInTheMiddleOfEnteringANumber = NO;
-    self.userIsInTheMiddleOfEnteringAVariable = NO;
-    [self.brain pushOperand:operand];
 }
 
 - (IBAction)digitPressed:(UIButton *)sender {
@@ -100,11 +72,10 @@
     if (self.userIsInTheMiddleOfEnteringANumber || self.userIsInTheMiddleOfEnteringAVariable)
         [self enterPressed];
     NSString *operation = sender.currentTitle;
-    [self addToHistory:operation];
-    [self addToHistory:@"="];
     double result = [self.brain performOperation:operation usingVariableValues:self.variableValues];
-    //[[self.brain class] runProgram:operation usingVariableValues:self.variableValues];
     self.display.text = [NSString stringWithFormat:@"%.12g", result];
+    [self displayInfix];
+
 }
 
 - (IBAction)signPressed:(UIButton *)sender {
@@ -123,24 +94,60 @@
     }
     else{
         NSString *operation = sender.currentTitle;
-        [self addToHistory:operation];
-        [self addToHistory:@"="];
         double result = [self.brain performOperation:operation];
         self.display.text = [NSString stringWithFormat:@"%.12g", result];
     }
 }
 
-- (IBAction)deletePressed:(UIButton *)sender {
+- (IBAction)enterPressed {
+    NSString *stringOfOperand = self.display.text;
+    id operand;
+    if (self.userIsInTheMiddleOfEnteringANumber){
+        operand = [NSNumber numberWithDouble:stringOfOperand.doubleValue];
+    }
+    else if (self.userIsInTheMiddleOfEnteringAVariable){
+        if ([self isValidVariable:stringOfOperand]){
+            operand = stringOfOperand;
+        }
+        else self.display.text = @"0";
+        
+    }
+    self.userIsInTheMiddleOfEnteringANumber = NO;
+    self.userIsInTheMiddleOfEnteringAVariable = NO;
+    [self.brain pushOperand:operand];
+    [self displayInfix];
+}
+
+- (IBAction)deletePressed{
     int length = self.display.text.length;
     if ((self.userIsInTheMiddleOfEnteringANumber || self.userIsInTheMiddleOfEnteringAVariable) && length > 0)
         self.display.text = [self.display.text substringToIndex:length-1];
 }
 
-- (IBAction)clearPressed:(UIButton *)sender {
-    self.history.text = @"";
+- (IBAction)clearPressed{
+    self.infixDisplay.text = @"";
     self.display.text = @"";
     self.userIsInTheMiddleOfEnteringANumber = NO;
     [self.brain clearData];
+}
+- (IBAction)undoPressed:(id)sender {
+    if (self.userIsInTheMiddleOfEnteringANumber || self.userIsInTheMiddleOfEnteringAVariable){
+            [self deletePressed];
+         if (self.display.text.length == 0){
+            self.userIsInTheMiddleOfEnteringANumber = NO;
+            self.userIsInTheMiddleOfEnteringAVariable = NO;
+        }
+    }
+    else{
+        [self.brain popOffProgramStack];
+        double result = [self.brain runProgram:nil usingVariableValues:self.variableValues];
+        self.display.text = [NSString stringWithFormat:@"%.12g", result];
+        [self displayInfix];
+    }
+}
+
+- (void) displayInfix{
+    self.infixDisplay.text = [[self brain] descriptionOfProgram:nil];
 }
 
 - (BOOL)isValidVariable:(NSString *)variable{
@@ -174,13 +181,15 @@
         self.variableValues = nil;
         self.values.text = @"variables = zero";
     }
-}
-- (IBAction)descriptionPressed {
-    [self.brain descriptionOfProgram:nil];
+    if (!self.userIsInTheMiddleOfEnteringANumber && !self.userIsInTheMiddleOfEnteringAVariable){
+        double result = [self.brain runProgram:nil usingVariableValues:self.variableValues];
+    self.display.text = [NSString stringWithFormat:@"%.12g", result];
+    }
 }
 
 - (void)viewDidUnload {
-    [self setDescription:nil];
+    [self setValues:nil];
+    [self setInfixDisplay:nil];
     [super viewDidUnload];
 }
 @end
