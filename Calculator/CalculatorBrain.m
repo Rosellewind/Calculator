@@ -151,7 +151,6 @@ if (!_programStack)
                             needsExchange = NO;
                             break;
                         }
-
                     }
                 }
             }

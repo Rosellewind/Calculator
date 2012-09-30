@@ -24,8 +24,16 @@
 @synthesize scale = _scale;
 
 -(CGPoint)origin{
-    if (!_origin.x)
-        return CGPointMake(DEFAULT_X(self.frame.size.width), DEFAULT_Y(self.frame.size.height));
+    if (!_origin.x){
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        id originX = [defaults objectForKey:@"originX"];
+        id originY = [defaults objectForKey:@"originY"];
+
+        if ([originX isKindOfClass:[NSNumber class]] && [originY isKindOfClass:[NSNumber class]]) {
+            return CGPointMake([originX doubleValue], [originY doubleValue]);
+        }
+        else return CGPointMake(DEFAULT_X(self.frame.size.width), DEFAULT_Y(self.frame.size.height));
+    }
     else return _origin;
 }
 -(void)setOrigin:(CGPoint)origin{
@@ -36,8 +44,14 @@
     }
 }
 -(CGFloat)scale{
-    if (!_scale)
-        return DEFAULT_SCALE;
+    if (!_scale){
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        id scale = [defaults objectForKey:@"scale"];
+        if ([scale isKindOfClass:[NSNumber class]])
+            return [scale doubleValue];
+        else return DEFAULT_SCALE;
+
+    }
     else return _scale;
 }
 -(void)setScale:(CGFloat)scale{
@@ -103,6 +117,11 @@
         self.scale *= gesture.scale;
         gesture.scale = 1;
     }
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setDouble:self.scale forKey:@"scale"];
+        [defaults synchronize];
+    }
 }
 
 -(void)pan:(UIPanGestureRecognizer*)gesture{
@@ -111,10 +130,20 @@
             self.origin = CGPointMake(self.origin.x + translation.x, self.origin.y + translation.y);
             [gesture setTranslation:CGPointZero inView:self];
         }
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setDouble:self.origin.x forKey:@"originX"];
+        [defaults setDouble:self.origin.y forKey:@"originY"];
+        [defaults synchronize];
+    }
 }
 -(void)tripleTap:(UITapGestureRecognizer*)gesture{
     if (gesture.state == UIGestureRecognizerStateEnded){
         self.origin = [gesture locationInView:self];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setDouble:self.origin.x forKey:@"originX"];
+        [defaults setDouble:self.origin.y forKey:@"originY"];
+        [defaults synchronize];
     }
 }
 
