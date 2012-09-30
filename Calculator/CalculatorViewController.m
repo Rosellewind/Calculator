@@ -73,13 +73,17 @@
 
 - (IBAction)signPressed:(UIButton *)sender {
     NSString *valueString = self.display.text;
-if (self.userIsInTheMiddleOfEnteringANumber) {
+    if (self.userIsInTheMiddleOfEnteringANumber) {
         double value = valueString.doubleValue;
         if (value < 0) {
             self.display.text = [self.display.text substringFromIndex:1];
         }
         else self.display.text = [@"-" stringByAppendingString:self.display.text];
     }
+    else if ([self.display.text isEqualToString:@"x"])
+        self.display.text = @"-x";
+    else if ([self.display.text isEqualToString:@"-x"])
+        self.display.text = @"x";
     else{
         NSString *operation = sender.currentTitle;
         double result = [self.brain performOperation:operation];
@@ -93,9 +97,10 @@ if (self.userIsInTheMiddleOfEnteringANumber) {
     if (self.userIsInTheMiddleOfEnteringANumber){
         operand = [NSNumber numberWithDouble:stringOfOperand.doubleValue];
     }
-    else if ([stringOfOperand isEqualToString:@"x"]){
+    else if ([stringOfOperand isEqualToString:@"x"] || [stringOfOperand isEqualToString:@"-x"]){
         operand = stringOfOperand;
     }
+
     self.userIsInTheMiddleOfEnteringANumber = NO;
     [self.brain pushOperand:operand];
     [self displayInfix];

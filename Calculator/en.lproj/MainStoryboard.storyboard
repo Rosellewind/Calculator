@@ -452,7 +452,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view contentMode="scaleToFill" id="0q8-NQ-EUm" customClass="GraphView">
+                            <view contentMode="redraw" id="0q8-NQ-EUm" customClass="GraphView">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="384"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>

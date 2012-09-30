@@ -76,8 +76,6 @@ if (!_programStack)
     
     id topOfStack = [stack lastObject];
     if (topOfStack) [stack removeLastObject];
-    NSLog(@"topOfStack:%@",topOfStack);
-    NSLog(@"stack:%@",stack);
     if ([topOfStack isKindOfClass:[NSNumber class]]) {
         result = [topOfStack doubleValue];
     }
@@ -134,21 +132,30 @@ if (!_programStack)
             BOOL needsExchange = NO;
 
             //go through variables present in program
-            for (NSString *var in variables) {
-                
-                //make sure its a string before checking isVariable
-                if ([obj isKindOfClass:[NSString class]]
-                    && [self isVariable:obj]){
-                    needsExchange = YES;
-                    
-                    //replace value for variable, make sure value exists first
-                    if ([var isEqualToString:obj] && [variableValues objectForKey:obj]){
-                        [programArray replaceObjectAtIndex:i withObject:[variableValues objectForKey:obj]];
-                        needsExchange = NO;
-                        break;
+            for (NSString *str in variables) {
+                if ([obj isKindOfClass:[NSString class]]){
+                    NSString *var = str;
+                    BOOL isNegative = NO;
+                    if (var.length > 1 && [var characterAtIndex:0] == '-') {
+                            isNegative = YES;
+                            var = [str substringFromIndex:1];
+                    }
+                    if ([self isVariable:obj]){
+                        needsExchange = YES;
+                        
+                        //replace value for variable, make sure value exists first
+                        if ([str isEqualToString:obj] && [variableValues objectForKey:var]){
+                            double value = [[variableValues objectForKey:var] doubleValue ];
+                            if (isNegative && value != 0) value *= -1;
+                            [programArray replaceObjectAtIndex:i withObject:[NSNumber numberWithDouble:value]];
+                            needsExchange = NO;
+                            break;
+                        }
+
                     }
                 }
             }
+            //default value
             if (needsExchange)
                 [programArray replaceObjectAtIndex:i withObject:[NSNumber numberWithDouble:0]];
         }
@@ -219,8 +226,7 @@ if (!_programStack)
 }
 
 + (BOOL)isVariable:(NSString *)variable{
-    char firstChar = [variable characterAtIndex:0];
-    if (firstChar >= 'A' && firstChar <= 'z'  && ![self isOperation:variable])
+    if ([variable isEqualToString:@"x"] || [variable isEqualToString:@"-x"])
         return YES;
     else return NO;
 }

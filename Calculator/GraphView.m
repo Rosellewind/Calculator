@@ -13,8 +13,7 @@
 @synthesize dataSource = _dataSource;
 
 -(void) setup{
-    NSLog(@"...%@",[AxesDrawer class]);
-    [[AxesDrawer class] drawAxesInRect:self.frame originAtPoint:self.dataSource.origin scale:self.dataSource.scale];
+//delete all setup
 }
 
 -(void) awakeFromNib{
@@ -30,13 +29,24 @@
     return self;
 }
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
+-(void)plotGraph{
+    NSArray *yValues = self.dataSource.yValues;//position in array represents x, value y
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    UIGraphicsPushContext(context);
+    CGContextBeginPath(context);
+    CGContextMoveToPoint(context, 0, [[yValues objectAtIndex:0] doubleValue]);
+
+    for (int i = 1; i < yValues.count; i++) {
+        CGContextAddLineToPoint(context, i, [[yValues objectAtIndex:i] doubleValue]);
+    }
+    CGContextStrokePath(context);
+    UIGraphicsPopContext();
+}
+
 - (void)drawRect:(CGRect)rect
 {
-    // Drawing code
+    [AxesDrawer drawAxesInRect:self.frame originAtPoint:self.dataSource.origin scale:self.dataSource.scale];
+    [self plotGraph];
 }
-*/
 
 @end

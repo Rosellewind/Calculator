@@ -10,9 +10,9 @@
 #import "CalculatorBrain.h"
 #import "AxesDrawer.h"
 
+
 @interface GraphViewController ()
-//@property (nonatomic) double scale;
-//@property (nonatomic) CGPoint origin;
+
 @end
 
 @implementation GraphViewController
@@ -32,19 +32,30 @@
     return self;
 }
 
+-(NSArray*)yValues{
+    NSMutableArray *yValues = [[NSMutableArray alloc]init];
+
+    //i and j are pixel positions, x and y are graph positions
+    for (double i = 0; i<self.graphView.frame.size.width; i++) {
+        double x = (i - self.origin.x)/self.scale;
+        double y = [CalculatorBrain runProgram:self.program usingVariableValues:[NSDictionary dictionaryWithObject:[NSNumber numberWithDouble:x] forKey:@"x"]];
+        double j = self.origin.y - self.scale * y;
+        [yValues addObject:[NSNumber numberWithDouble:j]];
+        NSLog(@"x:%f, y:%f, i:%f, j:%f",x,y,i,j);
+    }
+    return [yValues copy];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	self.infixDisplay.text = [CalculatorBrain descriptionOfProgram:self.program];
 //    self.graphView gesture
     
-    self.scale = 1.0;
-    self.origin = CGPointMake(0, 0);
-    
-//    [[AxesDrawer class] drawAxesInRect:self.graphView.frame originAtPoint:self.origin scale:self.scale];
-    
-    NSDictionary *variableValues = [NSDictionary dictionaryWithObject:[NSNull null] forKey:@"x"];
-    [CalculatorBrain runProgram:self.program usingVariableValues:variableValues];
+#define DEFAULT_SCALE 10.0
+
+    self.scale = DEFAULT_SCALE;
+    self.origin = CGPointMake(self.graphView.frame.size.width/2, self.graphView.frame.size.height/2);
 }
 
 - (void)viewDidUnload

@@ -12,6 +12,9 @@
 @protocol GraphViewDataSource <NSObject>
 @property (nonatomic) CGPoint origin;
 @property (nonatomic) float scale;
+
+-(NSArray*)yValues;
+
 @end
 
 @interface GraphView : UIView
