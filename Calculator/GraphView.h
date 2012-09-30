@@ -17,4 +17,7 @@
 @property (nonatomic, weak) IBOutlet id <GraphViewDataSource> dataSource;
 @property (nonatomic) CGPoint origin;
 @property (nonatomic) CGFloat scale;
+
+-(void)pan:(UIPanGestureRecognizer*)gesture;
+
 @end

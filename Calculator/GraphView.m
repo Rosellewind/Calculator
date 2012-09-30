@@ -47,6 +47,7 @@
     }
 }
 -(void) setup{
+
 }
 
 -(void) awakeFromNib{
@@ -95,6 +96,26 @@
 {
     [AxesDrawer drawAxesInRect:self.frame originAtPoint:self.origin scale:self.scale];
     [self plotGraph];
+}
+
+-(void)pinch:(UIPinchGestureRecognizer*)gesture{
+    if (gesture.state == UIGestureRecognizerStateChanged || gesture.state == UIGestureRecognizerStateEnded){
+        self.scale *= gesture.scale;
+        gesture.scale = 1;
+    }
+}
+
+-(void)pan:(UIPanGestureRecognizer*)gesture{
+        if (gesture.state == UIGestureRecognizerStateChanged || gesture.state == UIGestureRecognizerStateEnded){
+            CGPoint translation = [gesture translationInView:self];
+            self.origin = CGPointMake(self.origin.x + translation.x, self.origin.y + translation.y);
+            [gesture setTranslation:CGPointZero inView:self];
+        }
+}
+-(void)tripleTap:(UITapGestureRecognizer*)gesture{
+    if (gesture.state == UIGestureRecognizerStateEnded){
+        self.origin = [gesture locationInView:self];
+    }
 }
 
 @end

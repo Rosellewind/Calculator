@@ -20,6 +20,14 @@
 @synthesize infixDisplay = _infixDisplay;
 @synthesize graphView = _graphView;
 
+- (void) setGraphView:(GraphView *)graphView{
+    _graphView = graphView;
+    [self.graphView addGestureRecognizer:[[UIPinchGestureRecognizer alloc]initWithTarget:self.graphView action:@selector(pinch:)]];
+    [self.graphView addGestureRecognizer:[[UIPanGestureRecognizer alloc]initWithTarget:self.graphView action:@selector(pan:)]];
+    UITapGestureRecognizer *tripleTap = [[UITapGestureRecognizer alloc]initWithTarget:self.graphView action:@selector(tripleTap:)];
+    tripleTap.numberOfTapsRequired = 3;
+    [self.graphView addGestureRecognizer:tripleTap];
+}
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -39,7 +47,6 @@
 {
     [super viewDidLoad];
 	self.infixDisplay.text = [CalculatorBrain descriptionOfProgram:self.program];
-//    self.graphView gesture
 }
 
 - (void)viewDidUnload
