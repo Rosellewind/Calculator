@@ -76,7 +76,8 @@ if (!_programStack)
     
     id topOfStack = [stack lastObject];
     if (topOfStack) [stack removeLastObject];
-    
+    NSLog(@"topOfStack:%@",topOfStack);
+    NSLog(@"stack:%@",stack);
     if ([topOfStack isKindOfClass:[NSNumber class]]) {
         result = [topOfStack doubleValue];
     }
@@ -160,7 +161,6 @@ if (!_programStack)
         NSString *description;
         id topOfStack = [stack lastObject];
         if (topOfStack) [stack removeLastObject];
-        NSLog(@"topOfStack: %@",topOfStack);
     
         if ([self isBinaryOperation:topOfStack]){          
             NSString *secondOperand = [[self class] descriptionOfTopOfStack:stack previousOperation:topOfStack];
@@ -176,7 +176,7 @@ if (!_programStack)
             description = [topOfStack stringValue];//operand
         else if ([topOfStack isKindOfClass:[NSString class]])
             description = topOfStack;//pi or variable
-    NSLog(@"description:%@",description);
+        else description = @"~";
     return description;
 }
 
@@ -194,7 +194,6 @@ if (!_programStack)
         //join descriptions with ','
         description =  [programList componentsJoinedByString:@", "];
     }
-    NSLog(@".............%@",description);
     return description;
 }
 
@@ -216,7 +215,6 @@ if (!_programStack)
             [variables addObject:obj];
         }
     }
-    NSLog(@"variables: %@",variables);
     return [variables copy];//copy?
 }
 

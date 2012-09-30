@@ -16,6 +16,10 @@
 		3D27C0E415F7DE8A00F73E4D /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D27C0E215F7DE8A00F73E4D /* MainStoryboard.storyboard */; };
 		3D27C0E715F7DE8A00F73E4D /* CalculatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D27C0E615F7DE8A00F73E4D /* CalculatorViewController.m */; };
 		3D27C0EF15F7FA0E00F73E4D /* CalculatorBrain.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D27C0EE15F7FA0E00F73E4D /* CalculatorBrain.m */; };
+		3D30CDCF1617CD3E008DEA15 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3D30CDCE1617CD3E008DEA15 /* Default-568h@2x.png */; };
+		3DDA05221617C6E700C3C930 /* AxesDrawer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DDA051D1617C6E700C3C930 /* AxesDrawer.m */; };
+		3DDA05231617C6E700C3C930 /* GraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DDA051F1617C6E700C3C930 /* GraphView.m */; };
+		3DDA05241617C6E700C3C930 /* GraphViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DDA05211617C6E700C3C930 /* GraphViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +38,13 @@
 		3D27C0E615F7DE8A00F73E4D /* CalculatorViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CalculatorViewController.m; sourceTree = "<group>"; };
 		3D27C0ED15F7FA0E00F73E4D /* CalculatorBrain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculatorBrain.h; sourceTree = "<group>"; };
 		3D27C0EE15F7FA0E00F73E4D /* CalculatorBrain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalculatorBrain.m; sourceTree = "<group>"; };
+		3D30CDCE1617CD3E008DEA15 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		3DDA051C1617C6E700C3C930 /* AxesDrawer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AxesDrawer.h; sourceTree = "<group>"; };
+		3DDA051D1617C6E700C3C930 /* AxesDrawer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AxesDrawer.m; sourceTree = "<group>"; };
+		3DDA051E1617C6E700C3C930 /* GraphView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphView.h; sourceTree = "<group>"; };
+		3DDA051F1617C6E700C3C930 /* GraphView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GraphView.m; sourceTree = "<group>"; };
+		3DDA05201617C6E700C3C930 /* GraphViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphViewController.h; sourceTree = "<group>"; };
+		3DDA05211617C6E700C3C930 /* GraphViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GraphViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +64,7 @@
 		3D27C0C115F7DE8A00F73E4D = {
 			isa = PBXGroup;
 			children = (
+				3D30CDCE1617CD3E008DEA15 /* Default-568h@2x.png */,
 				3D27C0D615F7DE8A00F73E4D /* Calculator */,
 				3D27C0CF15F7DE8A00F73E4D /* Frameworks */,
 				3D27C0CD15F7DE8A00F73E4D /* Products */,
@@ -87,6 +99,12 @@
 				3D27C0E615F7DE8A00F73E4D /* CalculatorViewController.m */,
 				3D27C0ED15F7FA0E00F73E4D /* CalculatorBrain.h */,
 				3D27C0EE15F7FA0E00F73E4D /* CalculatorBrain.m */,
+				3DDA05201617C6E700C3C930 /* GraphViewController.h */,
+				3DDA05211617C6E700C3C930 /* GraphViewController.m */,
+				3DDA051E1617C6E700C3C930 /* GraphView.h */,
+				3DDA051F1617C6E700C3C930 /* GraphView.m */,
+				3DDA051C1617C6E700C3C930 /* AxesDrawer.h */,
+				3DDA051D1617C6E700C3C930 /* AxesDrawer.m */,
 				3D27C0D715F7DE8A00F73E4D /* Supporting Files */,
 			);
 			path = Calculator;
@@ -157,6 +175,7 @@
 			files = (
 				3D27C0DB15F7DE8A00F73E4D /* InfoPlist.strings in Resources */,
 				3D27C0E415F7DE8A00F73E4D /* MainStoryboard.storyboard in Resources */,
+				3D30CDCF1617CD3E008DEA15 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,6 +190,9 @@
 				3D27C0E115F7DE8A00F73E4D /* CalculatorAppDelegate.m in Sources */,
 				3D27C0E715F7DE8A00F73E4D /* CalculatorViewController.m in Sources */,
 				3D27C0EF15F7FA0E00F73E4D /* CalculatorBrain.m in Sources */,
+				3DDA05221617C6E700C3C930 /* AxesDrawer.m in Sources */,
+				3DDA05231617C6E700C3C930 /* GraphView.m in Sources */,
+				3DDA05241617C6E700C3C930 /* GraphViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
