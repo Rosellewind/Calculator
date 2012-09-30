@@ -8,12 +8,45 @@
 
 #import "GraphView.h"
 #import "AxesDrawer.h"
+#import "CalculatorBrain.h"
+
+#define DEFAULT_SCALE 10.0
+#define DEFAULT_X(w) w/2
+#define DEFAULT_Y(h) h/2
+
+@interface GraphView()
+
+@end
 
 @implementation GraphView
 @synthesize dataSource = _dataSource;
+@synthesize origin = _origin;
+@synthesize scale = _scale;
 
+-(CGPoint)origin{
+    if (!_origin.x)
+        return CGPointMake(DEFAULT_X(self.frame.size.width), DEFAULT_Y(self.frame.size.height));
+    else return _origin;
+}
+-(void)setOrigin:(CGPoint)origin{
+    if (origin.x != _origin.x && origin.y != _origin.y) {
+        _origin.x = origin.x;
+        _origin.y = origin.y;
+        [self setNeedsDisplay];
+    }
+}
+-(CGFloat)scale{
+    if (!_scale)
+        return DEFAULT_SCALE;
+    else return _scale;
+}
+-(void)setScale:(CGFloat)scale{
+    if (scale != _scale){
+        _scale = scale;
+        [self setNeedsDisplay];
+    }
+}
 -(void) setup{
-//delete all setup
 }
 
 -(void) awakeFromNib{
@@ -29,15 +62,30 @@
     return self;
 }
 
+-(NSArray*) getJValues{
+    NSMutableArray *jValues = [[NSMutableArray alloc]init];
+    
+    //i and j are pixel positions, x and y are graph positions
+    for (double i = 0; i<self.frame.size.width; i++) {
+        double x = (i - self.origin.x)/self.scale;
+        double y = [self.dataSource yValue:x];
+        double j = self.origin.y - self.scale * y;
+        [jValues addObject:[NSNumber numberWithDouble:j]];
+    }
+    return [jValues copy];
+}
+
 -(void)plotGraph{
-    NSArray *yValues = self.dataSource.yValues;//position in array represents x, value y
+    
+    //position in array is i, value  is j
+    NSArray *jValues = [self  getJValues];
     CGContextRef context = UIGraphicsGetCurrentContext();
     UIGraphicsPushContext(context);
     CGContextBeginPath(context);
-    CGContextMoveToPoint(context, 0, [[yValues objectAtIndex:0] doubleValue]);
+    CGContextMoveToPoint(context, 0, [[jValues objectAtIndex:0] doubleValue]);
 
-    for (int i = 1; i < yValues.count; i++) {
-        CGContextAddLineToPoint(context, i, [[yValues objectAtIndex:i] doubleValue]);
+    for (int i = 1; i < jValues.count; i++) {
+        CGContextAddLineToPoint(context, i, [[jValues objectAtIndex:i] doubleValue]);
     }
     CGContextStrokePath(context);
     UIGraphicsPopContext();
@@ -45,7 +93,7 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    [AxesDrawer drawAxesInRect:self.frame originAtPoint:self.dataSource.origin scale:self.dataSource.scale];
+    [AxesDrawer drawAxesInRect:self.frame originAtPoint:self.origin scale:self.scale];
     [self plotGraph];
 }
 
