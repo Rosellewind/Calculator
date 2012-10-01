@@ -141,8 +141,27 @@
     if ([segue.destinationViewController isKindOfClass:[GraphViewController class]]) {
         GraphViewController *vc = segue.destinationViewController;
         vc.program = [self.brain program];
-//        vc.delegate = self;
     }
+}
+
+-(GraphViewController*) splitViewGraphViewController{
+    id gvc = [self.splitViewController.viewControllers lastObject];
+    if (![gvc isKindOfClass:[GraphViewController class]])
+        gvc = nil;
+    return gvc;
+
+}
+
+- (IBAction)updateGraph {
+    [[self splitViewGraphViewController] setProgram:self.brain.program];
+}
+
+-(BOOL) splitViewController:(UISplitViewController *)svc shouldHideViewController:(UIViewController *)vc inOrientation:(UIInterfaceOrientation)orientation{
+    return NO;
+}
+
+-(void) awakeFromNib{
+    self.splitViewController.delegate = self;
 }
 
 - (void)viewDidUnload {

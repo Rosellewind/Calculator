@@ -79,9 +79,8 @@
 
 -(NSArray*) getJValues{
     NSMutableArray *jValues = [[NSMutableArray alloc]init];
-    
     //i and j are pixel positions, x and y are graph positions
-    for (double i = 0; i<self.frame.size.width; i++) {
+    for (double i = 0; i<self.frame.size.width; i += 1/self.contentScaleFactor) {
         double x = (i - self.origin.x)/self.scale;
         double y = [self.dataSource yValue:x];
         double j = self.origin.y - self.scale * y;

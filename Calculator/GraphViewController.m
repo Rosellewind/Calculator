@@ -29,6 +29,11 @@
     [self.graphView addGestureRecognizer:tripleTap];
 }
 
+-(void)setProgram:(id)program{
+    _program = program;
+    [self.graphView setNeedsDisplay];
+    self.infixDisplay.text = [CalculatorBrain descriptionOfProgram:self.program];
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
