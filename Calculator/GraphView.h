@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-//protocol here datasource
 @protocol GraphViewDataSource <NSObject>
 -(double)yValue:(double) x;
 @end

@@ -56,7 +56,7 @@ if (!_programStack)
 }
 
 -(void) clearData{
-    self.programStack = nil;//this okay to clear?
+    self.programStack = nil;//this okay to clear concerning memory?
 }
 
 -(NSString*)description{
@@ -221,7 +221,7 @@ if (!_programStack)
             [variables addObject:obj];
         }
     }
-    return [variables copy];//copy?
+    return [variables copy];
 }
 
 + (BOOL)isVariable:(NSString *)variable{
