@@ -80,10 +80,12 @@
 -(NSArray*) getJValues{
     NSMutableArray *jValues = [[NSMutableArray alloc]init];
     //i and j are pixel positions, x and y are graph positions
-    for (double i = 0; i<self.frame.size.width; i += 1/self.contentScaleFactor) {
-        double x = (i - self.origin.x)/self.scale;
+    NSLog(@"scale:%f origin:(%f,%f)",self.scale, self.origin.x, self.origin.y);
+    int pixels = self.frame.size.width * self.contentScaleFactor;
+    for (double i = 0; i<pixels; i++) {
+        double x = (i - self.origin.x*self.contentScaleFactor)/(self.scale * self.contentScaleFactor);
         double y = [self.dataSource yValue:x];
-        double j = self.origin.y - self.scale * y;
+        double j = self.origin.y * self.contentScaleFactor - y * self.contentScaleFactor * self.scale;
         [jValues addObject:[NSNumber numberWithDouble:j]];
     }
     return [jValues copy];
@@ -98,8 +100,8 @@
     CGContextBeginPath(context);
     CGContextMoveToPoint(context, 0, [[jValues objectAtIndex:0] doubleValue]);
 
-    for (int i = 1; i < jValues.count; i++) {
-        CGContextAddLineToPoint(context, i, [[jValues objectAtIndex:i] doubleValue]);
+    for (double i = 1; i < jValues.count; i++) {
+        CGContextAddLineToPoint(context, i/self.contentScaleFactor, [[jValues objectAtIndex:i] doubleValue]/self.contentScaleFactor);
     }
     CGContextStrokePath(context);
     UIGraphicsPopContext();

@@ -32,7 +32,7 @@
 -(void)setProgram:(id)program{
     _program = program;
     [self.graphView setNeedsDisplay];
-    self.infixDisplay.text = [CalculatorBrain descriptionOfProgram:self.program];
+    self.infixDisplay.text = [CalculatorBrain descriptionOfProgram:self.program];//for ipad
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -51,7 +51,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	self.infixDisplay.text = [CalculatorBrain descriptionOfProgram:self.program];
+	self.infixDisplay.text = [CalculatorBrain descriptionOfProgram:self.program];//for iphone
 }
 
 - (void)viewDidUnload
